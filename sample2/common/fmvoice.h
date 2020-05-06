@@ -6,6 +6,7 @@
 typedef struct _Fmvoice Fmvoice;
 struct _Fmvoice {
 	unsigned char	_vnum;
+	unsigned char	_tone;
 	bool			_keyon;
 	Fmvoice*		_nextVc;
 	void*			_parent;

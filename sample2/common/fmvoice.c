@@ -68,6 +68,7 @@ void Fmvoice_keyon( Fmvoice* _this, void* nt, void* pt, void* tn, unsigned char 
 	_this->_parent = nt;
 	_this->_keyon = true;
 	_this->_nextVc = FMNULL;
+	_this->_tone = Part_toneNumber(ptp);
 
 	//	set voice number
 	writeSingle( 11, _this->_vnum );
@@ -91,13 +92,13 @@ void Fmvoice_keyon( Fmvoice* _this, void* nt, void* pt, void* tn, unsigned char 
 	Fmvoice_chgPit(_this, Part_pb(ptp));
 
 	//	KeyOn, ToneNum
-	writeSingle( REG_TOP_ADRS+REG_CTRL, 0x40 + Part_toneNumber(ptp) );
+	writeSingle( REG_TOP_ADRS+REG_CTRL, 0x40 + _this->_tone );
 }
 void Fmvoice_keyoff( Fmvoice* _this )
 {
 	_this->_keyon = false;
 	writeSingle( 11, _this->_vnum );
-	writeSingle( REG_TOP_ADRS+REG_CTRL, 0 );
+	writeSingle( REG_TOP_ADRS+REG_CTRL, _this->_tone );
 }
 void Fmvoice_release( Fmvoice* _this )
 {

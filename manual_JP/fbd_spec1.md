@@ -1,27 +1,30 @@
 # YMF825(SD-1) IF specification
 
-## Caution
-
-Although this manual is created based on the SD-1 specifications, only the information necessary for YMF825Board is described. Therefore, please understand beforehand that it is not a complete specification of SD-1.
-In addition, please understand that we will not guarantee any results by using SD-1 based on the contents posted in this manual.
+## 注意
 
 
-## Features
+本書はSD-1仕様書に基づいて作成していますが、YMF825Boardに必要な情報のみ記載しています。 そのため、SD-1の完全仕様ではありませんので、あらかじめご了承ください。
+また、本書に掲載されている内容に基づいて、SD-1を使用した結果の保証はいたしかねますので、あらかじめご了承ください。
 
-+ 16-voice polyphonic FM synthesizer
-+ 29 on-chip operator-waveforms and 8 algorithms offers a whole variety of sound
-+ Synchronous serial data link for host controller interface
-+ Integrated loudspeaker driver (Also supports external amplifier connection)
-+ Integrated 3-band equalizer
-+ Integrated 16-bit monaural DAC
++ 本文書は翻訳日本語版です。日本語では不自然となる重複する形容表現は省略されている場合があります。
+## 特徴
+
++ 16ボイスのポリフォニックFMシンセサイザー
++ 29のオンチップオペレーター波形と8つのアルゴリズムにより、さまざまなサウンドを提供
+
++ ホストコントローラーインターフェイス用の同期シリアルデータリンク
++ 内蔵スピーカードライバー（外部アンプ接続もサポート）
++ 内蔵3バンドイコライザー
++ 内蔵16ビットモノラルDAC
+
 
 ## Interface Register
 
 ### System Setting
 
-+ I_ADR#0-2, 4, 29 can be accessed even when the ALRST is "1".
-As might be expected, other registers can be accessed only when the ALRST is "0".
 
++ I_ADR＃0-2、4、29にはALRSTが "1"の場合でもアクセスできますが
+他のレジスタにはALRSTが "0"の場合にのみアクセスできます。
 
 | I_ADR | Name | W/R | D7 | D6 | D5 | D4 | D3 | D2 | D1 | D0 | Reset Value |
 |-|-|-|-|-|-|-|-|-|-|-|-|
@@ -59,9 +62,9 @@ As might be expected, other registers can be accessed only when the ALRST is "0"
 |#31|Reserved|||||||||||
 
 Note
-+ Before you write I_ADR#12-19 of Synthesizer Setting, you first have to write channel number to CRGD_VNO[3:0] (I_ADR#11).
 
 
++ シンセサイザ設定のI_ADR＃12-19を書き込む前に、チャネル番号をCRGD_VNO [3：0]（I_ADR＃11）に書き込む必要があります。
 ### EQ Coeffcient Setting
 
 |I_ADR|Name|W/R|D7-D0|Reset Value|
@@ -131,31 +134,34 @@ Note
 
 ### Single Write
 
-2 bytes (16 bits) is needed for one write access: 1-byte write command and 1-byte write data.
-Be sure to access the register in two bytes (16 bits).
-The /SS pin should be set to "H" for each two-byte write access.
+
+1回の書き込みアクセスには2バイト（16ビット）が必要です。1バイトの書き込みコマンドと1バイトの書き込みデータです。
+必ず2バイト（16ビット）でアクセスしてください。
+/ SSピンは、2バイトの書き込みアクセスごとに "H"に設定する必要があります。
 
 ![Single Write](spi_single.png)
 
 ### Burst Write
 
-In the burst write operation, data can be written into the same interface register address in succession.
-Enter multiple data consecutively for one write command like this: [write command + data + data +...].
-This device interprets the /SS pin being "H" as the end of the write access; therefore, be sure to set this pin to "H" after the
-burst write operation.
-Each data should be one byte. If the /SS pin is set to "H" at less than 1 byte, such as 6 bits, unusual operation may occur
-because of an illegal write operation.
+Burst Writeでは、データを同じインターフェイスレジスタアドレスに連続して書き込むことができます。
+次のように、1つの書き込みコマンドに対して複数のデータを連続して入力します：[書き込みコマンド+データ+データ+ ...]。
+Burst Writeのモードでは、/ SSピンが "H"になる事を書き込みアクセスの終了と解釈します。 したがって、このピンはバースト書き込み操作中は"H"を保つ必要があります。
+各データは1バイトでなければなりません。 不正な書き込み操作が原因で/ SS端子が6ビットなど1バイト未満で "H"に設定された場合、異常動作が発生する場合があります。
+
+
 
 ![Burst Write](spi_burst.png)
 
 ### Read Access
 
-Setting the bit WR (command) to "1" indicates a read access command.
-The read data is transmitted in synchronization with the falling edges of the SCK from the 9th clock.
-The data is in MSB first format (D7→D0).
-The following shows the details of the SO pin:
-+ During the latter 8 clock cycles, the read data (D[7:0]) is transmitted in MSB first format.
-+ The SO pin goes to a high-impedance state (Hi-Z) whenever the data is not being read.
+
+
+WR（コマンド）ビットを "1"に設定する事で、読み取りアクセスコマンドを送信します。
+読み出したデータは、9クロック目からSCKの立ち下がりエッジに同期して送信されます。
+データはMSBファースト形式（D7→D0）です。
+SOピンの詳細を以下に示します。
++ 後半の8クロックサイクル中に、読み取りデータ（D [7：0]）はMSBファーストフォーマットで送信されます。
++ データが読み取られていないときは常に、SOピンはハイインピーダンス状態（Hi-Z）になります。
 
 ![Single Read](spi_read.png)
 
@@ -196,85 +202,71 @@ The following shows the details of the SO pin:
 |#29+30x[tn]||WS4|WS3|WS2|WS1|WS0|"0"|"0"|"0"|
 
 Note
-+ T_ADR means Tone Setting format of Contents Format(below).
-+ tn: Tone Number(0-15)
 
 
++ T_ADRは、Cotents Format（下記）のTone Settingフォーマットを意味します。
++ tn：音色番号（0-15）　原文(Tone Number)
 ### Contents Format
 
-The contents format specifies tone parameters and the sequence of data that can be played back with this device consists of melody contents.
-The contents are written into the register (I_ADR#7: CONTENTS_DATA_REG) via the CPU interface.
+Contents Formatは音色情報とメロディコンテンツシーケンスデータで構成されます。
+内容は、CPUインターフェイス（I_ADR＃7：CONTENTS_DATA_REG）を介してレジスタに書き込まれます。
 
 #### Data format
 
-+ Header: 1byte(80H + Maximum Tone Number)
-+ Tone Setting 30 to 480bytes(it depends on the number of the configured tones)
-+ Sequence Data(any size)
-+ End(80H,03H,81H,80H)
++ ヘッダー：1バイト（80H +最大音色番号） 
++ 音色設定データ30〜480バイト（設定された音色の数×30byte）
++ シーケンスデータ（任意のサイズ）   :データフォーマット非公表のため使用出来ない
++ 終了コード（80H、03H、81H、80H）
 
-#### Tone Setting
+#### 音色の設定
+音色パラメータは、ヘッダーに設定された音色の数によって設定されます。
+パラメータは、1つのトーンに対して30バイトのデータで構成されます。
+データは、書き込まれた順序で音色番号0からトーンパラメータメモリに転送され、割り当てられます。 したがって、中間の音色番号のパラメータを最初に書き込むことはできません。
+トーンパラメータの詳細については、"Tone Parameter"(fbd_spec3.md）をご覧ください。
 
-The tone parameters are set by the number of tones set to the Header.
-The parameter consists of 30 bytes of data for one tone.
-The data are transferred and assigned to the Tone parameter memory from Tone 0 in the order they are written; therefore, parameters of an intermediate Tone number cannot be written first.
-For details of the tone parameters, see "Tone Parameter"(fbd_spec3.md).
 
-## Initialization Procedure
+## 初期化手順
 
-1. Supply the power to the device. 
+1. デバイスに電源を供給します。
 
-	The power supply should be powered with RST_N pin held "L" when the power-on reset requirements cannot be satisfied.
+	パワーオンリセットの要件が満たされない場合は、RST_Nピンを "L"に保持して電源に電力を供給する必要があります。
 
-1. Wait for 100us after supply voltages rise
+1. 指定されたレベルまで供給電圧が上昇した後、100us待ちます
+	この期間は、レギュレータの安定化に必要な時間です。
 
-	up to the specified level.
-	This period of time is the time required for the regulator stabilization.
+1. RST_Nピンを "H"に設定します。
 
-1. Set the RST_N pin to "H". 
+	ハードウェアリセット状態が解除されます。
+	このデバイスをRST_Nピンを "H"に保持して使用する場合、 "H"に設定する必要はありません。
 
-	The hardware reset state is removed.
-	No need to set to "H" when this device is used with RST_N pin held "H".
+1. このデバイスを単一の5 V電源で使用する場合は、DRV_SELを「0」に設定します。
+	デュアル電源構成で使用する場合は、DRV_SELを "1"に設定してください。
 
-1. Set DRV_SEL to "0" when this device is used in single 5-V power supply
-configuration.
-Set DRV_SEL to "1" when this device is used in dual power supply configuration.
 
-	The power rail is selected.
+1.	 AP0を「0」に設定します。 VREFに電力が供給されます。
 
-1. Set the AP0 to "0". The VREF is powered.
+1.	水晶発振のクロックが安定に要する時間待ちます。
 
-1. Wait until the clock becomes stable. 
 
-	The duration of the time required for stable crystal oscillation.
+1. 	CLKEを "1"に設定し内部回路にクロックを供給します。
 
-1. Set the CLKE to "1". 
 
-	Clocks are supplied to the internal circuit.
+1. ALRSTを「0」に設定し内部回路のリセット状態を解除します。
 
-1. Set the ALRST to "0". 
+1. SFTRSTを「A3H」に設定しシンセサイザブロックを初期化します。
 
-	The reset state of the internal circuits is removed.
+1. SFTRSTを "00H"に設定します。
 
-1. Set the SFTRST to "A3H". 
+1.	ステップ10の後で30ms待ちます。
 
-	The synthesizer block is initialized.
+	この期間は、VREFの安定化とSFTRSTの完了に必要な時間です。
 
-1. Set the SFTRST to "00H".
+1. AP1とAP3を「0」に設定しオーディオ出力のパワーダウン状態をが解除します。
 
-1. Wait for 30ms after the step 10.
+1. 10uS待ちます。
 
-	This period of time is the time required for the VREF stabilization and the SFTRST completion.
+	この時間は、ポップノイズを防ぐために必要な時間です。今回はシンセサイザーの設定などに使用します。
 
-1. Set the AP1 and the AP3 to "0".
-
-	The power-down state of Audio Out is removed.
-
-1. Wait for 10us.
-
-	This period of time is the time required for preventing pop noise. Use this time for setting the synthesizer etc.
-
-1. Set the AP2 to "0". 
-
-	The power-down state of the Audio Out is removed.
+1. AP2を「0」に設定しオーディオ出力のパワーダウン状態を解除します。
 
 

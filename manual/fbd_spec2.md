@@ -243,7 +243,7 @@ The SIZE is the register used to set the size of sequence data in bytes.
 |#11|W/R|"0"|"0"|"0"|"0"|CRGD_VNO3|CRGD_VNO2|CRGD_VNO1|CRGD_VNO0|00H|
 
 #### Description
-The CRGD_VNO is used to specify a tone number.
+The CRGD_VNO is used to specify a voice number.
 
 #### Reset Conditions
 1. When the power supplies are turned on (power-on reset).
